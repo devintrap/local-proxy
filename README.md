@@ -124,6 +124,6 @@ APP_SUBDOMAIN=myapp
 
 ## 🔑 Access
 
-- 🔓️HTTPS: `https://${DOMAIN_NAME}`
-- 🔐HTTP: `http://${DOMAIN_NAME}` (redirects to HTTPS)
+- 🔐HTTPS: `https://${DOMAIN_NAME}`
+- 🔓️HTTP: `http://${DOMAIN_NAME}` (redirects to HTTPS)
 - 📊Dashboard: `https://traefik.${DOMAIN_NAME}` or `https://localhost:8080`
