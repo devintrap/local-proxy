@@ -1,0 +1,12 @@
+version: '3'
+services:
+  traefik:
+    extends:
+      file: traefik/compose.yml
+      service: traefik
+networks:
+  internal:
+    ipam:
+      config:
+        - subnet: ${SUBNET}
+          gateway: ${GETEWAY}

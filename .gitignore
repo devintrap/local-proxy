@@ -1,0 +1,38 @@
+# Local Proxy specific
+traefik/data/acme.json
+.env
+
+# IDE/Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+.DS_Store
+
+# SSL/TLS certificates
+*.pem
+*.key
+*.crt
+*.csr
+
+# Logs
+*.log
+logs/
+
+# Docker/Podman
+.docker/
+podman/
+
+# Environment files
+.env*
+!.env.example
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# System files
+Thumbs.db
+.directory

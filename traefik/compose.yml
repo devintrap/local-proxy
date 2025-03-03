@@ -1,0 +1,55 @@
+version: '3'
+services:
+  traefik:
+    image: "docker.io/library/traefik:${TRAEFIK_VERSION}"
+    restart: always
+    security_opt:
+      - label=type:container_runtime_t
+    command:
+      - "--api.dashboard=true"
+      - "--api=true"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.letsencrypt.acme.dnschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare"
+      - "--certificatesResolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53"
+      - "--certificatesResolvers.letsencrypt.acme.dnschallenge.delayBeforeCheck=20"
+      - "--certificatesresolvers.letsencrypt.acme.email=${SSL_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    networks:
+      internal:
+        ipv4_address: ${TRAEFIK_IP}
+    volumes:
+      - ./traefik/data/letsencrypt:/letsencrypt:Z
+      - /run/user/1000/podman/podman.sock:/var/run/docker.sock:z
+    environment:
+      - CF_API_EMAIL=${CLOUDFLARE_API_EMAIL}
+      - CF_DNS_API_TOKEN=${CLOUDFLARE_DNS_API_TOKEN}
+    labels:
+      - "traefik.enable=true"
+      # Router configuration
+      - "traefik.http.routers.traefikdashboard.rule=Host(`traefik.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.traefikdashboard.tls=true"
+      - "traefik.http.routers.traefikdashboard.entrypoints=web,websecure"
+      - "traefik.http.routers.traefikdashboard.tls.certresolver=letsencrypt"
+      # Service configuration (this was missing)
+      - "traefik.http.routers.traefikdashboard.service=api@internal"
+      # Security headers
+      - "traefik.http.middlewares.traefikdashboard.headers.SSLRedirect=true"
+      - "traefik.http.middlewares.traefikdashboard.headers.STSSeconds=315360000"
+      - "traefik.http.middlewares.traefikdashboard.headers.browserXSSFilter=true"
+      - "traefik.http.middlewares.traefikdashboard.headers.contentTypeNosniff=true"
+      - "traefik.http.middlewares.traefikdashboard.headers.forceSTSHeader=true"
+      - "traefik.http.middlewares.traefikdashboard.headers.SSLHost=${DOMAIN_NAME}"
+      - "traefik.http.middlewares.traefikdashboard.headers.STSIncludeSubdomains=true"
+      - "traefik.http.middlewares.traefikdashboard.headers.STSPreload=true"
+      - "traefik.http.routers.traefikdashboard.middlewares=traefikdashboard@docker"
