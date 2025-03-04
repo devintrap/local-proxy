@@ -1,5 +1,5 @@
 # Local Proxy specific
-traefik/data/acme.json
+traefik/data/letsencrypt/acme.json
 .env
 
 # IDE/Editor files
