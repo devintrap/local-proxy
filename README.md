@@ -64,7 +64,6 @@ touch myapp/compose.yml
 
 2. Add your service configuration in `myapp/compose.yml`:
 ```yaml
-// filepath: /home/pawel/Projects/gitlab/devintr.app/local-proxy/myapp/compose.yml
 services:
   myapp:
     image: nginx:${APP_VERSION}
